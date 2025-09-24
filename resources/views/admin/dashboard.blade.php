@@ -1,0 +1,425 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard Admin')
+
+@section('content')
+
+<!-- Dashboard -->
+<section id="dashboard">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">📊 Dashboard</h1>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded shadow">
+      <p class="text-gray-500">Usuarios registrados</p>
+      <h2 class="text-2xl font-bold">{{ $usuarios->count() }}</h2>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <p class="text-gray-500">Rutinas registradas</p>
+      <h2 class="text-2xl font-bold">{{ $rutinas->count() }}</h2>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <p class="text-gray-500">Ejercicios</p>
+      <h2 class="text-2xl font-bold">{{ $ejercicios->count() }}</h2>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <p class="text-gray-500">Profesionales</p>
+      <h2 class="text-2xl font-bold">
+        {{ $usuarios->where('rol','profesional')->count() }}
+      </h2>
+    </div>
+  </div>
+</section>
+
+@endsection
+
+
+{{-- <!-- ADMINISTRADOR - admin.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Administrador - FLEXFIT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Layout -->
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="bg-gray-900 text-white w-64 flex flex-col">
+      <div class="p-6 text-2xl font-bold border-b border-gray-700">FLEXFIT</div>
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="#dashboard" class="block p-3 rounded hover:bg-gray-800">📊 Dashboard</a>
+        <a href="#usuarios" class="block p-3 rounded hover:bg-gray-800">👥 Usuarios</a>
+        <a href="#rutinas" class="block p-3 rounded hover:bg-gray-800">🏋️ Rutinas</a>
+        <a href="#ejercicios" class="block p-3 rounded hover:bg-gray-800">💪 Ejercicios</a>
+        <a href="#programas" class="block p-3 rounded hover:bg-gray-800">📂 Programas</a>
+        <a href="#configuracion" class="block p-3 rounded hover:bg-gray-800">⚙️ Configuración</a>
+      </nav>
+
+      <!-- Botón cerrar sesión -->
+      <div class="p-4 border-t border-gray-700">
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+          @csrf
+        </form>
+        <button 
+          onclick="cerrarSesion()" 
+          class="bg-red-500 hover:bg-red-600 text-white w-full py-2 rounded font-semibold transition"
+        >
+          🔒 Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="flex-1 p-6 space-y-10">
+      <!-- Dashboard -->
+      <section id="dashboard">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">📊 Dashboard</h1>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="bg-white p-6 rounded shadow">
+            <p class="text-gray-500">Usuarios activos</p>
+            <h2 class="text-2xl font-bold" id="contadorUsuarios">0</h2>
+          </div>
+          <div class="bg-white p-6 rounded shadow">
+            <p class="text-gray-500">Rutinas pendientes</p>
+            <h2 id="contadorRutinas" class="text-2xl font-bold">0</h2>
+          </div>
+          <div class="bg-white p-6 rounded shadow">
+            <p class="text-gray-500">Profesionales</p>
+            <h2 class="text-2xl font-bold" id="contadorProfesionales">0</h2>
+          </div>
+          <div class="bg-white p-6 rounded shadow">
+            <p class="text-gray-500">Programas</p>
+            <h2 id="contadorProgramas" class="text-2xl font-bold">0</h2>
+          </div>
+        </div>
+      </section>
+
+      <!-- Usuarios -->
+      <section id="usuarios">
+        <h2 class="text-2xl font-semibold mb-4">👥 Gestión de Usuarios</h2>
+        <div class="bg-white p-6 rounded shadow">
+          <div class="flex flex-col md:flex-row gap-4 mb-4">
+            <input type="text" id="nombreUsuario" placeholder="Nombre" class="border rounded p-2 flex-1">
+            <input type="text" id="apellidoUsuario" placeholder="Apellido" class="border rounded p-2 flex-1">
+            <input type="email" id="correoUsuario" placeholder="Correo" class="border rounded p-2 flex-1">
+            <select id="rolUsuario" class="border rounded p-2 w-48">
+              <option value="usuario">Usuario</option>
+              <option value="profesional">Profesional</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button onclick="agregarUsuario()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Agregar</button>
+            <button onclick="verUsuarios()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500">Ver todos</button>
+          </div>
+
+          <div id="usuariosLista" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- Rutinas -->
+      <section id="rutinas">
+        <h2 class="text-2xl font-semibold mb-4">🏋️ Supervisión de Rutinas</h2>
+        <div class="bg-white p-6 rounded shadow" id="rutinasAdmin"></div>
+      </section>
+
+      <!-- Ejercicios -->
+      <section id="ejercicios">
+        <h2 class="text-2xl font-semibold mb-4">💪 Gestión de Ejercicios</h2>
+        <div class="bg-white p-6 rounded shadow">
+          <input type="text" id="nombreEjercicio" placeholder="Nombre del ejercicio" class="border rounded p-2 w-full mb-3">
+          <input type="text" id="grupoEjercicio" placeholder="Grupo muscular (ej: Piernas)" class="border rounded p-2 w-full mb-3">
+          <textarea id="descripcionEjercicio" placeholder="Descripción" class="border rounded p-2 w-full mb-3"></textarea>
+          <button onclick="agregarEjercicio()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Agregar Ejercicio</button>
+          <div id="ejerciciosLista" class="mt-4"></div>
+        </div>
+      </section>
+
+      <!-- Programas -->
+      <section id="programas">
+        <h2 class="text-2xl font-semibold mb-4">📂 Programas Oficiales</h2>
+        <div class="bg-white p-6 rounded shadow">
+          <input type="text" id="nombrePrograma" placeholder="Nombre del programa" class="border rounded p-2 w-full mb-3">
+          <input type="url" id="linkPrograma" placeholder="Enlace al PDF" class="border rounded p-2 w-full mb-3">
+          <input type="url" id="imagenPrograma" placeholder="Enlace imagen (opcional)" class="border rounded p-2 w-full mb-3">
+          <button onclick="agregarPrograma()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Agregar Programa</button>
+          <div id="programasLista" class="mt-4 grid gap-4"></div>
+        </div>
+      </section>
+
+      <!-- Configuración -->
+      <section id="configuracion">
+        <h2 class="text-2xl font-semibold mb-4">⚙️ Configuración</h2>
+        <div class="bg-white p-6 rounded shadow space-y-4">
+          <p class="text-gray-600">Aquí podrás cambiar el logo, colores y parámetros básicos del sistema.</p>
+          <button onclick="eliminarCuenta()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded w-full">
+            🗑️ Eliminar mi cuenta (admin)
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  
+  <script>
+    // Datos persistentes en localStorage
+    const LS_USERS = "ff_users";
+    const LS_RUTINAS = "rutinasFlexfit"; // ya lo usabas
+    const LS_EJERCICIOS = "ff_ejercicios";
+    const LS_PROGRAMAS = "ff_programas";
+
+    // Inicializar con valores por defecto si no existe
+    let usuarios = JSON.parse(localStorage.getItem(LS_USERS)) || [
+      { nombre: "Carlos", apellido: "Gómez", correo: "carlos@mail.com", rol: "usuario" },
+      { nombre: "Ana", apellido: "López", correo: "ana@mail.com", rol: "profesional" }
+    ];
+    let rutinasPendientes = JSON.parse(localStorage.getItem(LS_RUTINAS)) || [];
+    let ejercicios = JSON.parse(localStorage.getItem(LS_EJERCICIOS)) || [];
+    let programas = JSON.parse(localStorage.getItem(LS_PROGRAMAS)) || [];
+
+    // Guardar estado en localStorage (util)
+    function saveAll() {
+      localStorage.setItem(LS_USERS, JSON.stringify(usuarios));
+      localStorage.setItem(LS_EJERCICIOS, JSON.stringify(ejercicios));
+      localStorage.setItem(LS_PROGRAMAS, JSON.stringify(programas));
+    }
+
+    function cerrarSesion() {
+      // opcional: no borrar todo, solo marcar logout
+      localStorage.removeItem('ff_logged_in');
+      window.location.href = "index.html";
+    }
+
+    // ----------------- USUARIOS CRUD -----------------
+    function agregarUsuario() {
+      const nombre = document.getElementById("nombreUsuario").value.trim();
+      const apellido = document.getElementById("apellidoUsuario").value.trim();
+      const correo = document.getElementById("correoUsuario").value.trim();
+      const rol = document.getElementById("rolUsuario").value;
+
+      if (!nombre || !apellido || !correo) {
+        alert("Completa nombre, apellido y correo.");
+        return;
+      }
+      usuarios.push({ nombre, apellido, correo, rol });
+      saveAll();
+      verUsuarios();
+      // limpiar campos
+      document.getElementById("nombreUsuario").value = "";
+      document.getElementById("apellidoUsuario").value = "";
+      document.getElementById("correoUsuario").value = "";
+      document.getElementById("rolUsuario").value = "usuario";
+    }
+
+    // Render de lista de usuarios (con toggle, editar y eliminar)
+    function verUsuarios() {
+      const lista = document.getElementById("usuariosLista");
+      lista.innerHTML = usuarios.map((u,i)=>`
+        <div id="usuario_${i}" class="border rounded p-2">
+          <button onclick="toggleUsuario(${i})" class="w-full text-left font-semibold">
+            ${escapeHtml(u.nombre)} ${escapeHtml(u.apellido)} - <span class="text-sm text-gray-500">${escapeHtml(u.rol)}</span>
+          </button>
+          <div id="usuarioDetalle${i}" class="hidden mt-2 text-sm text-gray-700 space-y-1">
+            <p><strong>Nombre:</strong> ${escapeHtml(u.nombre)}</p>
+            <p><strong>Apellido:</strong> ${escapeHtml(u.apellido)}</p>
+            <p><strong>Correo:</strong> ${escapeHtml(u.correo)}</p>
+            <div class="flex gap-2 mt-2">
+              <button onclick="editarUsuario(${i})" class="text-blue-600 text-xs">✏️ Editar</button>
+              <button onclick="eliminarUsuario(${i})" class="text-rose-600 text-xs">❌ Eliminar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      actualizarContadores();
+    }
+
+    function toggleUsuario(i){
+      const detalle = document.getElementById(`usuarioDetalle${i}`);
+      if(!detalle) return;
+      detalle.classList.toggle("hidden");
+    }
+
+    function editarUsuario(i){
+      const cont = document.getElementById(`usuario_${i}`);
+      if(!cont) return;
+      const u = usuarios[i];
+      cont.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-2 items-start">
+          <input id="edit_nombre_${i}" type="text" value="${escapeHtml(u.nombre)}" class="border rounded p-2 w-full md:w-1/4">
+          <input id="edit_apellido_${i}" type="text" value="${escapeHtml(u.apellido)}" class="border rounded p-2 w-full md:w-1/4">
+          <input id="edit_correo_${i}" type="email" value="${escapeHtml(u.correo)}" class="border rounded p-2 w-full md:w-1/3">
+          <select id="edit_rol_${i}" class="border rounded p-2 w-full md:w-1/6">
+            <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
+            <option value="profesional" ${u.rol==='profesional'?'selected':''}>Profesional</option>
+            <option value="admin" ${u.rol==='admin'?'selected':''}>Admin</option>
+          </select>
+        </div>
+        <div class="mt-2 flex gap-2">
+          <button onclick="guardarEdicion(${i})" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Guardar</button>
+          <button onclick="verUsuarios()" class="bg-gray-300 px-3 py-1 rounded text-sm">Cancelar</button>
+        </div>
+      `;
+    }
+
+    function guardarEdicion(i){
+      const nombre = document.getElementById(`edit_nombre_${i}`).value.trim();
+      const apellido = document.getElementById(`edit_apellido_${i}`).value.trim();
+      const correo = document.getElementById(`edit_correo_${i}`).value.trim();
+      const rol = document.getElementById(`edit_rol_${i}`).value;
+
+      if(!nombre || !apellido || !correo){
+        alert("Completa todos los campos.");
+        return;
+      }
+
+      usuarios[i] = { nombre, apellido, correo, rol };
+      saveAll();
+      verUsuarios();
+    }
+
+    function eliminarUsuario(i){
+      if(!confirm("¿Eliminar usuario?")) return;
+      usuarios.splice(i,1);
+      saveAll();
+      verUsuarios();
+    }
+
+    // ----------------- RUTINAS (pendientes) -----------------
+    function mostrarRutinasPendientes() {
+      const contenedor = document.getElementById("rutinasAdmin");
+      contenedor.innerHTML = rutinasPendientes.map((r, i) => `
+        <div class="border rounded p-4 mb-4">
+          <h4 class="font-bold">${escapeHtml(r.nombre)}</h4>
+          <p>${escapeHtml(r.descripcion)}</p>
+          <div class="flex gap-2 mt-2">
+            <button onclick="aceptarRutina(${i})" class="bg-green-600 text-white px-3 py-1 rounded">Aceptar</button>
+            <button onclick="rechazarRutina(${i})" class="bg-red-600 text-white px-3 py-1 rounded">Rechazar</button>
+          </div>
+        </div>`).join('');
+      document.getElementById("contadorRutinas").innerText = rutinasPendientes.length;
+    }
+    function aceptarRutina(i) { rutinasPendientes[i].aprobada = true; localStorage.setItem(LS_RUTINAS, JSON.stringify(rutinasPendientes)); mostrarRutinasPendientes(); }
+    function rechazarRutina(i) { rutinasPendientes.splice(i, 1); localStorage.setItem(LS_RUTINAS, JSON.stringify(rutinasPendientes)); mostrarRutinasPendientes(); }
+
+    // ----------------- EJERCICIOS -----------------
+    function agregarEjercicio() {
+      const nombre = document.getElementById("nombreEjercicio").value.trim();
+      const grupo = document.getElementById("grupoEjercicio").value.trim();
+      const descripcion = document.getElementById("descripcionEjercicio").value.trim();
+      if (nombre && grupo) {
+        ejercicios.push({ nombre, grupo, descripcion });
+        localStorage.setItem(LS_EJERCICIOS, JSON.stringify(ejercicios));
+        renderEjercicios();
+        document.getElementById("nombreEjercicio").value = "";
+        document.getElementById("grupoEjercicio").value = "";
+        document.getElementById("descripcionEjercicio").value = "";
+      } else {
+        alert("Completa nombre y grupo del ejercicio.");
+      }
+    }
+    function renderEjercicios() {
+      document.getElementById("ejerciciosLista").innerHTML = ejercicios.map((e,i) => `
+        <div class="flex items-center justify-between p-2 border rounded">
+          <div>
+            <strong>${escapeHtml(e.nombre)}</strong> <span class="text-sm text-gray-500">- ${escapeHtml(e.grupo)}</span>
+            <div class="text-sm text-gray-600">${escapeHtml(e.descripcion || '')}</div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="eliminarEjercicio(${i})" class="text-rose-600 text-sm">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    function eliminarEjercicio(i){
+      if(!confirm("Eliminar ejercicio?")) return;
+      ejercicios.splice(i,1);
+      localStorage.setItem(LS_EJERCICIOS, JSON.stringify(ejercicios));
+      renderEjercicios();
+    }
+
+    // ----------------- PROGRAMAS -----------------
+    function agregarPrograma(){
+      const nombre = document.getElementById("nombrePrograma").value.trim();
+      const link = document.getElementById("linkPrograma").value.trim();
+      const imagen = document.getElementById("imagenPrograma").value.trim();
+      if(!nombre || !link){ alert("Nombre y link son obligatorios."); return; }
+      programas.push({ nombre, link, imagen });
+      localStorage.setItem(LS_PROGRAMAS, JSON.stringify(programas));
+      renderProgramas();
+      document.getElementById("nombrePrograma").value = "";
+      document.getElementById("linkPrograma").value = "";
+      document.getElementById("imagenPrograma").value = "";
+    }
+
+    function renderProgramas(){
+      const cont = document.getElementById("programasLista");
+      if(programas.length===0){
+        cont.innerHTML = "<p class='text-sm text-gray-500'>No hay programas.</p>";
+      } else {
+        cont.innerHTML = programas.map((p,i)=>`
+          <div class="flex items-center gap-4 border rounded p-3">
+            <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+              ${p.imagen ? `<img src="${escapeHtml(p.imagen)}" alt="${escapeHtml(p.nombre)}" class="object-cover w-full h-full">` : `<div class="text-sm text-gray-400">Sin imagen</div>`}
+            </div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <strong>${escapeHtml(p.nombre)}</strong>
+                  <div class="text-xs text-gray-500"><a href="${escapeHtml(p.link)}" target="_blank" class="hover:underline text-blue-600">${escapeHtml(p.link)}</a></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <button onclick="eliminarPrograma(${i})" class="text-rose-600 text-sm">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+      document.getElementById("contadorProgramas").innerText = programas.length;
+    }
+    function eliminarPrograma(i){
+      if(!confirm("Eliminar programa?")) return;
+      programas.splice(i,1);
+      localStorage.setItem(LS_PROGRAMAS, JSON.stringify(programas));
+      renderProgramas();
+    }
+
+    // ----------------- CONFIG / Eliminar cuenta -----------------
+    function eliminarCuenta(){
+      if(confirm("⚠️ ¿Seguro que quieres eliminar tu cuenta de administrador? Se borrarán los datos locales.")){
+        localStorage.clear();
+        alert("Cuenta eliminada ❌");
+        window.location.href = "index.html";
+      }
+    }
+
+    // ----------------- UTIL y Inicialización -----------------
+    function escapeHtml(text){
+      if(!text && text !== 0) return "";
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function actualizarContadores(){
+      document.getElementById("contadorUsuarios").textContent = usuarios.length;
+      document.getElementById("contadorProfesionales").textContent = usuarios.filter(u=>u.rol==="profesional").length;
+      document.getElementById("contadorRutinas").textContent = rutinasPendientes.length;
+      document.getElementById("contadorProgramas").textContent = programas.length;
+    }
+
+    // primera carga
+    verUsuarios();
+    mostrarRutinasPendientes();
+    renderEjercicios();
+    renderProgramas();
+  </script>
+</body>
+</html>
+ --}}

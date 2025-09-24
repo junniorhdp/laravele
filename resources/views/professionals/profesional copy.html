@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Profesional - FLEXFIT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex">
+
+<!-- Sidebar -->
+<aside class="w-64 bg-gray-900 text-white flex flex-col min-h-screen">
+  <div class="p-4 text-2xl font-bold border-b border-gray-800">FLEXFIT</div>
+  <nav class="flex-1 p-4 space-y-2">
+    <button onclick="mostrarSeccion('dashboard')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">📊 <span class="ml-2">Dashboard</span></button>
+    <button onclick="mostrarSeccion('crearRutina')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">📝 <span class="ml-2">Crear Rutina</span></button>
+    <button onclick="mostrarSeccion('misRutinas')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">📂 <span class="ml-2">Mis Rutinas</span></button>
+    <button onclick="mostrarSeccion('misEjercicios')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">💪 <span class="ml-2">Mis Ejercicios</span></button>
+    <button onclick="mostrarSeccion('misProgramas')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">📂 <span class="ml-2">Programas</span></button>
+    <button onclick="mostrarSeccion('usuariosCargo')" class="flex items-center w-full p-2 hover:bg-gray-800 rounded">👥 <span class="ml-2">Usuarios a cargo</span></button>
+  </nav>
+  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+  </form>
+  <button onclick="cerrarSesion()" class="bg-red-600 hover:bg-red-700 p-3">Cerrar sesión</button>
+
+</aside>
+
+<!-- Main content -->
+<main class="flex-1 p-6 space-y-6">
+
+  <!-- Dashboard -->
+  <section id="dashboard" class="bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">Panel del Profesional</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-blue-100 text-blue-800 p-4 rounded">
+        <p class="text-lg font-semibold">Rutinas creadas</p>
+        <p id="totalRutinas" class="text-3xl">0</p>
+      </div>
+      <div class="bg-yellow-100 text-yellow-800 p-4 rounded">
+        <p class="text-lg font-semibold">En revisión</p>
+        <p id="enRevision" class="text-3xl">0</p>
+      </div>
+      <div class="bg-green-100 text-green-800 p-4 rounded">
+        <p class="text-lg font-semibold">Aprobadas</p>
+        <p id="aprobadas" class="text-3xl">0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Crear rutina -->
+  <section id="crearRutina" class="bg-white p-6 rounded shadow hidden">
+    <h2 class="text-xl font-bold mb-4">Crear nueva rutina</h2>
+    <input id="nombreRutina" type="text" placeholder="Nombre de la rutina" class="border p-2 w-full mb-4 rounded">
+    <textarea id="descripcionRutina" placeholder="Descripción de la rutina" class="border p-2 w-full mb-4 rounded"></textarea>
+    <button onclick="crearRutina()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Guardar rutina</button>
+  </section>
+
+  <!-- Mis rutinas -->
+  <section id="misRutinas" class="bg-white p-6 rounded shadow hidden">
+    <h2 class="text-xl font-bold mb-4">Mis Rutinas</h2>
+    <div id="listaRutinas" class="space-y-4"></div>
+  </section>
+
+  <!-- Mis ejercicios -->
+  <section id="misEjercicios" class="bg-white p-6 rounded shadow hidden">
+    <h2 class="text-xl font-bold mb-4">Mis Ejercicios</h2>
+    <input id="nombreEjercicio" type="text" placeholder="Nombre del ejercicio" class="border p-2 w-full mb-2 rounded">
+    <input id="grupoEjercicio" type="text" placeholder="Grupo muscular" class="border p-2 w-full mb-2 rounded">
+    <textarea id="descripcionEjercicio" placeholder="Descripción" class="border p-2 w-full mb-2 rounded"></textarea>
+    <button onclick="crearEjercicio()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Agregar Ejercicio</button>
+    <div id="listaEjercicios" class="space-y-4 mt-4"></div>
+  </section>
+
+  <!-- Mis programas -->
+  <section id="misProgramas" class="bg-white p-6 rounded shadow hidden">
+    <h2 class="text-xl font-bold mb-4">Programas</h2>
+    <input id="nombrePrograma" type="text" placeholder="Nombre del programa" class="border p-2 w-full mb-2 rounded">
+    <input id="linkPrograma" type="url" placeholder="Enlace al PDF" class="border p-2 w-full mb-2 rounded">
+    <input id="imagenPrograma" type="url" placeholder="Enlace a imagen (opcional)" class="border p-2 w-full mb-2 rounded">
+    <button onclick="crearPrograma()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Agregar Programa</button>
+    <div id="listaProgramas" class="space-y-4 mt-4"></div>
+  </section>
+
+  <!-- Usuarios a cargo -->
+  <section id="usuariosCargo" class="bg-white p-6 rounded shadow hidden">
+    <h2 class="text-xl font-bold mb-4">Usuarios a cargo</h2>
+    <div id="listaUsuarios" class="space-y-4"></div>
+  </section>
+
+</main>
+
+<script>
+  let rutinas = JSON.parse(localStorage.getItem("rutinasFlexfit")) || [];
+  let ejercicios = JSON.parse(localStorage.getItem("ejerciciosFlexfit")) || [];
+  let programas = JSON.parse(localStorage.getItem("programasFlexfit")) || [];
+  let usuariosCargo = [
+    { nombre: "Carlos", notas: "Buen progreso en fuerza" },
+    { nombre: "Ana", notas: "Mejorar asistencia" }
+  ];
+
+  function mostrarSeccion(id) {
+    document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+    if (id === "dashboard") actualizarDashboard();
+    if (id === "misRutinas") mostrarRutinas();
+    if (id === "misEjercicios") mostrarEjercicios();
+    if (id === "misProgramas") mostrarProgramas();
+    if (id === "usuariosCargo") mostrarUsuarios();
+  }
+
+  // Rutinas
+  function crearRutina() {
+    const nombre = document.getElementById("nombreRutina").value.trim();
+    const descripcion = document.getElementById("descripcionRutina").value.trim();
+    if (nombre && descripcion) {
+      rutinas.push({ nombre, descripcion, aprobada: false });
+      localStorage.setItem("rutinasFlexfit", JSON.stringify(rutinas));
+      document.getElementById("nombreRutina").value = "";
+      document.getElementById("descripcionRutina").value = "";
+      alert("Rutina creada con éxito. Pendiente de aprobación.");
+      actualizarDashboard();
+    }
+  }
+  function mostrarRutinas() {
+    const cont = document.getElementById("listaRutinas");
+    cont.innerHTML = rutinas.map((r,i)=>`
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">${r.nombre}</h4>
+        <p>${r.descripcion}</p>
+        <p class="mt-2">${r.aprobada ? '✅ Aprobada' : '⏳ En revisión'}</p>
+        <button onclick="editarRutina(${i})" class="text-blue-600">✏️ Editar</button>
+        <button onclick="eliminarRutina(${i})" class="text-red-600 ml-2">❌ Eliminar</button>
+      </div>`).join('');
+  }
+  function editarRutina(i) {
+    const nuevoNombre = prompt("Nuevo nombre:", rutinas[i].nombre);
+    const nuevaDesc = prompt("Nueva descripción:", rutinas[i].descripcion);
+    if (nuevoNombre && nuevaDesc) {
+      rutinas[i].nombre = nuevoNombre;
+      rutinas[i].descripcion = nuevaDesc;
+      localStorage.setItem("rutinasFlexfit", JSON.stringify(rutinas));
+      mostrarRutinas();
+    }
+  }
+  function eliminarRutina(i) {
+    rutinas.splice(i,1);
+    localStorage.setItem("rutinasFlexfit", JSON.stringify(rutinas));
+    mostrarRutinas();
+  }
+
+  // Ejercicios
+  function crearEjercicio() {
+    const nombre = document.getElementById("nombreEjercicio").value.trim();
+    const grupo = document.getElementById("grupoEjercicio").value.trim();
+    const descripcion = document.getElementById("descripcionEjercicio").value.trim();
+    if (nombre && grupo) {
+      ejercicios.push({ nombre, grupo, descripcion });
+      localStorage.setItem("ejerciciosFlexfit", JSON.stringify(ejercicios));
+      mostrarEjercicios();
+    }
+  }
+  function mostrarEjercicios() {
+    const cont = document.getElementById("listaEjercicios");
+    cont.innerHTML = ejercicios.map((e,i)=>`
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">${e.nombre}</h4>
+        <p>${e.descripcion}</p>
+        <p class="text-sm text-gray-600">Grupo: ${e.grupo}</p>
+        <button onclick="eliminarEjercicio(${i})" class="text-red-600">❌ Eliminar</button>
+      </div>`).join('');
+  }
+  function eliminarEjercicio(i) {
+    ejercicios.splice(i,1);
+    localStorage.setItem("ejerciciosFlexfit", JSON.stringify(ejercicios));
+    mostrarEjercicios();
+  }
+
+  // Programas
+  function crearPrograma() {
+    const nombre = document.getElementById("nombrePrograma").value.trim();
+    const link = document.getElementById("linkPrograma").value.trim();
+    const img = document.getElementById("imagenPrograma").value.trim();
+    if (nombre && link) {
+      programas.push({ nombre, link, img });
+      localStorage.setItem("programasFlexfit", JSON.stringify(programas));
+      mostrarProgramas();
+    }
+  }
+  function mostrarProgramas() {
+    const cont = document.getElementById("listaProgramas");
+    cont.innerHTML = programas.map((p,i)=>`
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">${p.nombre}</h4>
+        ${p.img ? `<img src="${p.img}" alt="programa" class="max-w-xs mb-2">` : ''}
+        <a href="${p.link}" target="_blank" class="text-blue-600">📥 Descargar PDF</a>
+        <button onclick="eliminarPrograma(${i})" class="text-red-600 ml-2">❌ Eliminar</button>
+      </div>`).join('');
+  }
+  function eliminarPrograma(i) {
+    programas.splice(i,1);
+    localStorage.setItem("programasFlexfit", JSON.stringify(programas));
+    mostrarProgramas();
+  }
+
+  // Usuarios a cargo
+  function mostrarUsuarios() {
+    const cont = document.getElementById("listaUsuarios");
+    cont.innerHTML = usuariosCargo.map(u=>`
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">${u.nombre}</h4>
+        <p class="text-sm text-gray-600">Notas: ${u.notas}</p>
+      </div>`).join('');
+  }
+
+  function actualizarDashboard() {
+    document.getElementById("totalRutinas").textContent = rutinas.length;
+    document.getElementById("enRevision").textContent = rutinas.filter(r => !r.aprobada).length;
+    document.getElementById("aprobadas").textContent = rutinas.filter(r => r.aprobada).length;
+  }
+
+  function cerrarSesion() {
+    window.location.href = "index.html";
+  }
+
+  mostrarSeccion("dashboard");
+</script>
+</body>
+</html>
+

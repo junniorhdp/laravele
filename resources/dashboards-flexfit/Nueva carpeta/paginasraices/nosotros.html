@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nosotros - FlexFit</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Poppins:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+  background-color: #111;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: transparent;
+      color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      height: auto;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+
+    .lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .line {
+      width: 1px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .line::after {
+      content: '';
+      position: absolute;
+      height: 15vh;
+      width: 100%;
+      top: -50%;
+      left: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 75%, #ffffff 100%);
+      animation: drop 7s infinite;
+      animation-timing-function: cubic-bezier(0.4, 0.26, 0, 0.97);
+    }
+
+    .line:nth-child(1)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #FF4500 75%, #FF4500); animation-delay: 0.5s; }
+    .line:nth-child(2)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #32CD32 75%, #32CD32); animation-delay: 1s; }
+    .line:nth-child(3)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #1E90FF 75%, #1E90FF); animation-delay: 1.5s; }
+    .line:nth-child(4)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #FFD700 75%, #FFD700); animation-delay: 2s; }
+    .line:nth-child(5)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #8A2BE2 75%, #8A2BE2); animation-delay: 2.5s; }
+    .line:nth-child(6)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #20B2AA 75%, #20B2AA); animation-delay: 3s; }
+    .line:nth-child(7)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #DC143C 75%, #DC143C); animation-delay: 3.5s; }
+    .line:nth-child(8)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #00FA9A 75%, #00FA9A); animation-delay: 4s; }
+    .line:nth-child(9)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #FF1493 75%, #FF1493); animation-delay: 4.5s; }
+    .line:nth-child(10)::after { background: linear-gradient(to bottom, rgba(255,255,255,0), #00BFFF 75%, #00BFFF); animation-delay: 5s; }
+
+    @keyframes drop {
+      0% { top: -50%; }
+      100% { top: 110%; }
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1, h2 {
+      color: #00aaff;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+
+    p {
+      font-size: 1.1em;
+      line-height: 1.8;
+      color: #ccc;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .valores {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .valor {
+      background-color: #1e2a36;
+      flex: 1 1 30%;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .valor h3 {
+      color: #00aaff;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #000;
+      color: #777;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="lines">
+    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+    <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+  </div>
+
+  <div class="container">
+    <h1>Sobre Nosotros</h1>
+
+    <div class="section">
+      <h2>Misión</h2>
+      <p>Desarrollar una plataforma web innovadora de entrenamiento físico que combine accesibilidad, diseño moderno y herramientas útiles, permitiendo a los usuarios mejorar su salud desde cualquier lugar y a su propio ritmo.</p>
+    </div>
+
+    <div class="section">
+      <h2>Visión</h2>
+      <p>Ser reconocidos como un equipo joven y emprendedor que transforma ideas simples en soluciones digitales funcionales y atractivas, contribuyendo al bienestar físico y mental de las personas.</p>
+    </div>
+
+    <div class="section">
+      <h2>Nuestra Historia</h2>
+      <p>Somos cuatro estudiantes apasionados por la tecnología, el diseño y la salud. Nacimos como un equipo de trabajo con un sueño en común: crear una plataforma que ayudara a las personas a entrenar sin complicaciones. Así nació FlexFit, un proyecto que va más allá de una tarea: es nuestra primera apuesta por construir algo grande y útil para todos.</p>
+    </div>
+
+    <div class="section">
+      <h2>Valores</h2>
+      <div class="valores">
+        <div class="valor">
+          <h3>Creatividad</h3>
+          <p>Cada parte de FlexFit ha sido pensada y diseñada desde cero, con ideas frescas y una mirada joven.</p>
+        </div>
+        <div class="valor">
+          <h3>Trabajo en equipo</h3>
+          <p>Cuatro mentes, una sola meta. Aprendemos y crecemos juntos en cada etapa del proyecto.</p>
+        </div>
+        <div class="valor">
+          <h3>Empatía</h3>
+          <p>Entendemos que cada usuario es diferente. Por eso FlexFit se adapta a cada estilo de vida.</p>
+        </div>
+        <div class="valor">
+          <h3>Superación</h3>
+          <p>Igual que en el entrenamiento, buscamos mejorar día a día, tanto en nuestras habilidades como en nuestro producto.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 FlexFit - Todos los derechos reservados
+  </footer>
+</body>
+</html>

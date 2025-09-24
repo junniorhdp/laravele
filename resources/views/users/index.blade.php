@@ -1,0 +1,382 @@
+<<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlexFit — Panel de Usuario</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#e6f6ff',
+              100: '#ccecff',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+    .card { @apply bg-white/90 backdrop-blur shadow-sm rounded-xl; }
+    .glass { @apply bg-white/70 backdrop-blur; }
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
+    ::-webkit-scrollbar-track{background:#f1f5f9}
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <div class="min-h-screen flex">
+    <!-- Barra lateral -->
+    <aside class="w-[250px] shrink-0 bg-slate-900 text-slate-100 sticky top-0 h-screen flex flex-col">
+      <div class="px-5 py-6 flex items-center gap-3 border-b border-white/10">
+        <div class="h-9 w-9 rounded-lg bg-brand-600 grid place-content-center text-white font-bold">F</div>
+        <div>
+          <h1 class="text-lg font-semibold leading-tight">FLEXFIT</h1>
+          <p class="text-xs text-slate-300">Usuario</p>
+        </div>
+      </div>
+
+      <nav class="p-3 flex-1 overflow-y-auto">
+        <a href="#dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/70 transition">🏠 Dashboard</a>
+        <a href="#rutinas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/70 transition">📋 Mis rutinas</a>
+        <a href="#crear" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/70 transition">➕ Crear rutinas</a>
+        <a href="#musculos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/70 transition">💪 Grupos musculares</a>
+        <a href="#programas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/70 transition">📚 Programas</a>
+      </nav>
+
+      <div class="p-3 mt-auto border-t border-white/10">
+        <button id="btnLogout" class="w-full inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg px-4 py-2 transition">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="flex-1 min-w-0">
+      <header class="sticky top-0 z-10 bg-white/70 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-4">
+          
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold">¡Bienvenido a tu panel, <span id="userName" class="text-brand-600">Atleta</span>! 🏋️</h2>
+          </div>
+          <div class="relative">
+            <input id="searchInput" type="text" placeholder="Buscar rutina..." class="w-[260px] rounded-lg border-slate-200 focus:border-brand-500 focus:ring-brand-500 text-sm"/>
+          </div>
+        </div>
+      </header>
+
+      <div class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+        
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="space-y-6">
+          <div class="card p-6">
+            <h3 class="text-xl font-semibold">Tu progreso</h3>
+            <div class="grid grid-cols-3 gap-6 mt-4">
+              <div class="text-center"><p class="text-sm">Aprobadas</p><p id="kpiAprobadas" class="text-2xl font-bold">0</p></div>
+              <div class="text-center"><p class="text-sm">En revisión</p><p id="kpiRevision" class="text-2xl font-bold">0</p></div>
+              <div class="text-center"><p class="text-sm">Totales</p><p id="kpiTotales" class="text-2xl font-bold">0</p></div>
+            </div>
+          </div>
+        </section>
+<!-- Actualizar datos -->
+<section id="actualizar-datos" class="space-y-6">
+  <h3 class="text-xl font-semibold">🔄 Actualizar mis datos</h3>
+
+  <form action="#" method="POST" class="bg-white p-6 rounded-lg shadow space-y-4 w-full">
+    <!-- Nombre -->
+    <div>
+      <label for="nombre" class="block text-sm font-medium text-slate-700">Nombre completo</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ej: Carlos Pérez"
+             class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Correo -->
+    <div>
+      <label for="email" class="block text-sm font-medium text-slate-700">Correo electrónico</label>
+      <input type="email" id="email" name="email" placeholder="Ej: usuario@mail.com"
+             class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Edad y Estatura -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="edad" class="block text-sm font-medium text-slate-700">Edad</label>
+        <input type="number" id="edad" name="edad" placeholder="Ej: 25"
+               class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label for="estatura" class="block text-sm font-medium text-slate-700">Estatura (cm)</label>
+        <input type="number" id="estatura" name="estatura" placeholder="Ej: 175"
+               class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+    </div>
+
+    <!-- Peso -->
+    <div>
+      <label for="peso" class="block text-sm font-medium text-slate-700">Peso (kg)</label>
+      <input type="number" id="peso" name="peso" placeholder="Ej: 70"
+             class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Botón actualizar -->
+    <div class="pt-4">
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 transition">
+        Guardar cambios
+      </button>
+    </div>
+  </form>
+</section>
+
+
+        <!-- Calendario -->
+<section id="calendario" class="space-y-4">
+  <h3 class="text-xl font-semibold mb-4">📅 Calendario</h3>
+  <div class="bg-white p-6 rounded-lg shadow">
+    <div id="calendar" class="grid grid-cols-7 gap-2 text-center text-sm"></div>
+  </div>
+</section>
+
+
+        <!-- CRUD Rutinas -->
+        <section id="crear" class="space-y-6">
+          <h3 class="text-xl font-semibold">Gestiona tus rutinas</h3>
+          <div class="card p-6 space-y-4">
+            <input type="text" id="nombreRutinaUsuario" placeholder="Nombre de la rutina" class="w-full rounded-lg border-slate-200 focus:border-brand-500 text-sm p-2">
+            <textarea id="descripcionRutinaUsuario" placeholder="Descripción" class="w-full rounded-lg border-slate-200 focus:border-brand-500 text-sm p-2"></textarea>
+            <button onclick="crearRutinaUsuario()" class="w-full bg-brand-600 hover:bg-brand-700 text-white rounded-lg px-4 py-2 text-sm">Guardar rutina</button>
+          </div>
+          <div id="misRutinasUsuario" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+        <!-- Programas recomendados -->
+<section id="programas" class="space-y-6">
+  <div class="flex items-end justify-between">
+    <h3 class="text-xl font-semibold">Programas recomendados</h3>
+    <a href="#rutinas" class="text-brand-700 hover:underline text-sm">Ver mis rutinas</a>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    
+    <!-- Programa 1 -->
+    <article class="card p-6 border border-slate-100 flex flex-col md:flex-row gap-6">
+      <img alt="Programa fuerza" class="w-full md:w-56 aspect-[3/4] object-cover rounded-lg"
+           src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop">
+      <div class="flex-1">
+        <h4 class="text-lg font-semibold">Fuerza y Potencia · 12 semanas</h4>
+        <p class="text-slate-600 text-sm mt-1">Plan progresivo para mejorar tu RM en sentadilla, banca y peso muerto.</p>
+        <div class="mt-4 flex items-center gap-2 text-xs">
+          <span class="px-2 py-1 rounded-full bg-slate-100">Intermedio</span>
+          <span class="px-2 py-1 rounded-full bg-slate-100">3-4 días/sem</span>
+        </div>
+        <a href="fuerza-plan.pdf" download
+           class="mt-5 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 text-sm transition">
+          Descargar plan
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11 3h2v8h3l-4 4-4-4h3V3zM5 19h14v2H5z"/>
+          </svg>
+        </a>
+      </div>
+    </article>
+
+    <!-- Programa 2 -->
+    <article class="card p-6 border border-slate-100 flex flex-col md:flex-row gap-6">
+      <img alt="Programa definición" class="w-full md:w-56 aspect-[3/4] object-cover rounded-lg"
+           src="https://fitgeneration.es/wp-content/uploads/2024/06/etapa-de-definicion-1.png">
+      <div class="flex-1">
+        <h4 class="text-lg font-semibold">Definición y Resistencia · 8 semanas</h4>
+        <p class="text-slate-600 text-sm mt-1">Circuitos, HIIT y fuerza metabólica para reducir tu % de grasa corporal.</p>
+        <div class="mt-4 flex items-center gap-2 text-xs">
+          <span class="px-2 py-1 rounded-full bg-slate-100">Todos</span>
+          <span class="px-2 py-1 rounded-full bg-slate-100">3 días/sem</span>
+        </div>
+        <a href="definicion-plan.pdf" download
+           class="mt-5 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 text-sm transition">
+          Descargar plan
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11 3h2v8h3l-4 4-4-4h3V3zM5 19h14v2H5z"/>
+          </svg>
+        </a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+
+        <footer class="py-10 text-center text-sm text-slate-500">
+          © <span id="year"></span> FLEXFIT — Hecho con 💙
+        </footer>
+      </div>
+    </main>
+  </div>
+  
+
+  <script>
+    // Datos iniciales
+    const savedName = localStorage.getItem('ff_user_name') || 'Atleta';
+    document.getElementById('userName').textContent = savedName;
+
+    const rutinas = JSON.parse(localStorage.getItem('rutinasFlexfit') || '[]');
+    let rutinasUsuario = JSON.parse(localStorage.getItem("rutinasUsuario") || "[]");
+
+    // KPIs
+    const totales   = rutinas.length + rutinasUsuario.length;
+    const aprobadas = rutinas.filter(r => r.aprobada).length;
+    const revision  = rutinas.filter(r => !r.aprobada).length;
+    document.getElementById('kpiTotales').textContent  = totales;
+    document.getElementById('kpiAprobadas').textContent = aprobadas;
+    document.getElementById('kpiRevision').textContent  = revision;
+
+    // CRUD Rutinas usuario
+    function mostrarRutinasUsuario(){
+      const grid = document.getElementById("misRutinasUsuario");
+      if(rutinasUsuario.length===0){
+        grid.innerHTML = "<p class='col-span-full text-center text-slate-500'>No has creado rutinas todavía.</p>";
+      } else {
+        grid.innerHTML = rutinasUsuario.map((r,i)=>`
+          <div class="card p-5 border border-slate-100 hover:shadow-lg transition">
+            <h4 class="font-semibold">${r.nombre}</h4>
+            <p class="text-sm text-slate-600 mt-1">${r.descripcion}</p>
+            <div class="mt-3 flex items-center justify-between text-xs">
+              <button onclick="editarRutinaUsuario(${i})" class="text-brand-600 hover:underline">Editar</button>
+              <button onclick="eliminarRutinaUsuario(${i})" class="text-rose-600 hover:underline">Eliminar</button>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    function crearRutinaUsuario(){
+      const nombre = document.getElementById("nombreRutinaUsuario").value.trim();
+      const descripcion = document.getElementById("descripcionRutinaUsuario").value.trim();
+      if(nombre && descripcion){
+        rutinasUsuario.push({ nombre, descripcion });
+        localStorage.setItem("rutinasUsuario", JSON.stringify(rutinasUsuario));
+        mostrarRutinasUsuario();
+        document.getElementById("nombreRutinaUsuario").value = "";
+        document.getElementById("descripcionRutinaUsuario").value = "";
+      } else {
+        alert("Completa todos los campos");
+      }
+    }
+
+    function eliminarRutinaUsuario(i){
+      if(confirm("¿Seguro que quieres eliminar esta rutina?")){
+        rutinasUsuario.splice(i,1);
+        localStorage.setItem("rutinasUsuario", JSON.stringify(rutinasUsuario));
+        mostrarRutinasUsuario();
+      }
+    }
+
+    function editarRutinaUsuario(i){
+      const r = rutinasUsuario[i];
+      const nuevoNombre = prompt("Editar nombre de la rutina:", r.nombre);
+      const nuevaDesc = prompt("Editar descripción:", r.descripcion);
+      if(nuevoNombre && nuevaDesc){
+        rutinasUsuario[i] = { nombre: nuevoNombre, descripcion: nuevaDesc };
+        localStorage.setItem("rutinasUsuario", JSON.stringify(rutinasUsuario));
+        mostrarRutinasUsuario();
+      }
+    }
+
+    // Inicialización
+    mostrarRutinasUsuario();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Logout
+    document.getElementById('btnLogout').addEventListener('click', ()=>{
+      localStorage.removeItem('ff_logged_in');
+      localStorage.removeItem('ff_user_name');
+      window.location.href = "index.html";
+    });
+    // === CALENDARIO ===
+const calendarEl = document.getElementById("calendar");
+if (calendarEl) {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const days = ["D","L","M","M","J","V","S"];
+  days.forEach(d => {
+    const cell = document.createElement("div");
+    cell.textContent = d;
+    cell.className = "font-semibold";
+    calendarEl.appendChild(cell);
+  });
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement("div");
+    calendarEl.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement("div");
+    cell.textContent = d;
+    cell.className = "py-2 rounded";
+    if (d === today.getDate()) {
+      cell.className += " bg-brand-600 text-white font-bold"; // 🔵 azul de FlexFit
+    } else {
+      cell.className += " hover:bg-brand-50 cursor-pointer transition";
+    }
+    calendarEl.appendChild(cell);
+  }
+}
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("#actualizar-datos form");
+    const nombreInput = document.getElementById("nombre");
+    const emailInput = document.getElementById("email");
+    const edadInput = document.getElementById("edad");
+    const estaturaInput = document.getElementById("estatura");
+    const pesoInput = document.getElementById("peso");
+    const userNameSpan = document.getElementById("userName"); // 👈 donde se muestra el nombre arriba
+
+    // 🔹 1. Cargar datos guardados si existen
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData) {
+      nombreInput.value = userData.nombre || "";
+      emailInput.value = userData.email || "";
+      edadInput.value = userData.edad || "";
+      estaturaInput.value = userData.estatura || "";
+      pesoInput.value = userData.peso || "";
+      if (userNameSpan) {
+        userNameSpan.textContent = userData.nombre || "Atleta";
+      }
+    }
+
+    // 🔹 2. Guardar cambios al enviar formulario
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const data = {
+        nombre: nombreInput.value,
+        email: emailInput.value,
+        edad: edadInput.value,
+        estatura: estaturaInput.value,
+        peso: pesoInput.value,
+      };
+
+      localStorage.setItem("userData", JSON.stringify(data));
+
+      // 🔹 Actualizar el nombre en el panel superior
+      if (userNameSpan) {
+        userNameSpan.textContent = data.nombre || "Atleta";
+      }
+
+      alert("✅ Datos actualizados correctamente");
+    });
+  });
+
+  </script>
+</body>
+</html>
